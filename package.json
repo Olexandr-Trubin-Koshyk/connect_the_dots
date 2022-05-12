@@ -3,15 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "dependencies": {
     "gh-pages": "^4.0.0",
-    "parcel": "^1.12.3"
+    "main.js": "0.0.1",
+    "parcel": "^1.12.3",
+    "phaser": "^3.55.2"
   },
   "devDependencies": {
-    "@linthtml/linthtml": "^0.8.6"
+    "@linthtml/linthtml": "^0.8.6",
+    "concurrently": "^7.1.0",
+    "eslint": "^8.15.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "stylelint": "^14.8.2",
+    "stylelint-config-standard-scss": "^3.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:html": "linthtml ./src/index.html",
+    "lint:css": "stylelint **/*.scss",
+    "lint:js": "eslint ./src",
+    "lint": "concurrently \"npm run lint:html\" \"npm run lint:css\" \"npm run lint:js\"",
     "start": "parcel ./src/index.html --open",
     "build": "rm -rf dist && parcel build ./src/index.html --public-url ./ --no-content-hash",
     "predeploy": "npm run build",
