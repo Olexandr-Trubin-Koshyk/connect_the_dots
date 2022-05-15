@@ -1,12 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable import/no-cycle */
 import Phaser from 'phaser';
-// eslint-disable-next-line import/no-cycle
 import { GameScene } from './GameScene';
 
-// eslint-disable-next-line import/prefer-default-export
 export const config = {};
 
 if (GameScene) {
-  // eslint-disable-next-line import/prefer-default-export
   config.type = Phaser.AUTO;
   config.width = 800;
   config.height = 600;
@@ -27,6 +27,5 @@ if (GameScene) {
   };
   config.scene = new GameScene();
 
-  // eslint-disable-next-line no-unused-vars
   const game = new Phaser.Game(config);
 }
