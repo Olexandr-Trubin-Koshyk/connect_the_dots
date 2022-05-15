@@ -84,7 +84,6 @@ export class GameScene extends Phaser.Scene {
   onDotSelected(pointer, dot) {
     this.selectedDot = dot;
     this.selectedDots = [...this.selectedDots, this.selectedDot];
-    console.log(this.selectedDot);
   }
 
   onChainDots(pointer, dot) {
@@ -114,7 +113,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   onDotsRemove() {
-    console.log(this.selectedDots.length);
     if (this.selectedDots.length > 1) {
       for (const dot of this.selectedDots) {
         dot.destroy();
