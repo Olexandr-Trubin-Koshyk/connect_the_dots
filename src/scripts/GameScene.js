@@ -10,6 +10,10 @@ const DOT_URL = 'https://i.ibb.co/n0Swyq4/dot.png';
 export class GameScene extends Phaser.Scene {
   constructor() {
     super('Game');
+
+    this.selectedDot = null;
+    this.selectedDots = [];
+    this.lines = [];
   }
 
   preload() {
@@ -30,6 +34,10 @@ export class GameScene extends Phaser.Scene {
 
       this.dots.push(new Dot(this, dotColor, position));
     }
+
+    this.input.on('gameobjectdown', this.onDotSelected, this);
+    this.input.on('gameobjectmove', this.onChainDots, this);
+    this.input.on('gameobjectup', this.onDotsRemove, this);
   }
 
   createDotsField() {
@@ -71,6 +79,55 @@ export class GameScene extends Phaser.Scene {
     this.pointCounter = 0;
 
     this.pointsText.setText(`Points: ${this.pointCounter}`);
+  }
+
+  onDotSelected(pointer, dot) {
+    this.selectedDot = dot;
+    this.selectedDots = [...this.selectedDots, this.selectedDot];
+    console.log(this.selectedDot);
+  }
+
+  onChainDots(pointer, dot) {
+    this.equalDot = dot;
+
+    if (this.selectedDot.color === this.equalDot.color) {
+      if (
+        this.selectedDot.position.x === this.equalDot.position.x 
+        && this.selectedDot.position.y !== this.equalDot.position.y
+      ) {
+        this.lines.push(this.selectedDot
+          .pickDot(true, 'vertical', this.equalDot.position.y - this.selectedDot.position.y));
+          this.selectedDot = this.equalDot;
+          this.selectedDots = [...this.selectedDots, this.equalDot];
+      }
+      
+      if (
+        this.selectedDot.position.y === this.equalDot.position.y
+        && this.selectedDot.position.x !== this.equalDot.position.x
+      ) {
+        this.lines.push(this.selectedDot
+          .pickDot(true, 'horizontal', this.equalDot.position.x - this.selectedDot.position.x));
+          this.selectedDot = this.equalDot;
+          this.selectedDots = [...this.selectedDots, this.equalDot];
+      }
+    }
+  }
+
+  onDotsRemove() {
+    console.log(this.selectedDots.length);
+    if (this.selectedDots.length > 1) {
+      for (const dot of this.selectedDots) {
+        dot.destroy();
+      }
+
+      this.selectedDots.length = 0;
+  
+      for (const line of this.lines) {
+        line.destroy();
+      }
+
+      this.lines.length = 0;
+    }
   }
 
   create() {
