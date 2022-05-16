@@ -117,15 +117,14 @@ export class GameScene extends Phaser.Scene {
       for (const dot of this.selectedDots) {
         dot.destroy();
       }
-
-      this.selectedDots.length = 0;
   
       for (const line of this.lines) {
         line.destroy();
       }
-
-      this.lines.length = 0;
     }
+    
+    this.selectedDots.length = 0;
+    this.lines.length = 0;
   }
 
   create() {
