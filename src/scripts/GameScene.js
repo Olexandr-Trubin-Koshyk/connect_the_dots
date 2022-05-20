@@ -135,6 +135,12 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  startDotsFall() {
+    this.dots.forEach(dot => {
+      dot.move()
+    })
+  }
+
   onDotsRemove() {
     if (this.selectedDots.length === 1) {
       this.selectedDots.length = 0;
@@ -161,6 +167,7 @@ export class GameScene extends Phaser.Scene {
     this.createDotsField();
     this.createDots();
     this.createText();
+    this.startDotsFall()
   }
 
   getDotsPositions() {
