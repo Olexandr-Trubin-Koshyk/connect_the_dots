@@ -14,6 +14,7 @@ export class GameScene extends Phaser.Scene {
     this.selectedDot = null;
     this.selectedDots = [];
     this.lines = [];
+    this.pointCounter = 0;
   }
 
   preload() {
@@ -69,30 +70,51 @@ export class GameScene extends Phaser.Scene {
   }
 
   createText() {
-    this.pointsText = this.add.text((this.sys.game.config.width - 300), 50, '', {
+    this.pointsText = this.add.text((this.sys.game.config.width - 300), 50, `Points: ${this.pointCounter}`, {
       font: '40px Helvetica',
       fill: '#fff',
     });
   }
 
-  createPointCounter() {
-    this.pointCounter = 0;
-
+  addPoints(value = 0) {
+    this.pointCounter += value;
     this.pointsText.setText(`Points: ${this.pointCounter}`);
   }
 
   onDotSelected(pointer, dot) {
     this.selectedDot = dot;
-    this.selectedDots = [...this.selectedDots, this.selectedDot];
+
+    if (!this.selectedDots.includes(this.selectedDot)) {
+      this.selectedDots = [...this.selectedDots, this.selectedDot]; 
+    }
   }
 
   onChainDots(pointer, dot) {
     this.equalDot = dot;
 
+    if ((this.equalDot.position.y - this.selectedDot.position.y) !== config.dotSize 
+      && (this.equalDot.position.y - this.selectedDot.position.y) !== -config.dotSize  
+      && (this.equalDot.position.x - this.selectedDot.position.x) !== config.dotSize  
+      && (this.equalDot.position.x - this.selectedDot.position.x) !== -config.dotSize) 
+    {
+      return;
+    }
+
     if (this.selectedDot.color === this.equalDot.color) {
+      if (
+        this.selectedDots.includes(this.equalDot)
+      ) {
+        if (this.lines.length) {
+          this.lines[this.lines.length - 1].destroy();
+          this.lines.pop();
+        }
+        this.selectedDots.pop();
+      }
+
       if (
         this.selectedDot.position.x === this.equalDot.position.x 
         && this.selectedDot.position.y !== this.equalDot.position.y
+        && !this.selectedDots.includes(this.equalDot)
       ) {
         this.lines.push(this.selectedDot
           .pickDot(true, 'vertical', this.equalDot.position.y - this.selectedDot.position.y));
@@ -103,6 +125,7 @@ export class GameScene extends Phaser.Scene {
       if (
         this.selectedDot.position.y === this.equalDot.position.y
         && this.selectedDot.position.x !== this.equalDot.position.x
+        && !this.selectedDots.includes(this.equalDot)
       ) {
         this.lines.push(this.selectedDot
           .pickDot(true, 'horizontal', this.equalDot.position.x - this.selectedDot.position.x));
@@ -113,6 +136,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   onDotsRemove() {
+    if (this.selectedDots.length === 1) {
+      this.selectedDots.length = 0;
+      this.lines.length = 0;
+    }
+    
     if (this.selectedDots.length > 1) {
       for (const dot of this.selectedDots) {
         dot.destroy();
@@ -121,10 +149,11 @@ export class GameScene extends Phaser.Scene {
       for (const line of this.lines) {
         line.destroy();
       }
+ 
+      this.addPoints(this.selectedDots.length);
+      this.selectedDots.length = 0;
+      this.lines.length = 0;
     }
-    
-    this.selectedDots.length = 0;
-    this.lines.length = 0;
   }
 
   create() {
@@ -132,7 +161,6 @@ export class GameScene extends Phaser.Scene {
     this.createDotsField();
     this.createDots();
     this.createText();
-    this.createPointCounter();
   }
 
   getDotsPositions() {
