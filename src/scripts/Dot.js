@@ -32,30 +32,30 @@ export class Dot extends Phaser.GameObjects.Sprite {
 
   pickDot(boolean, oriental, move) {
     if (boolean) {
-      const fromX = this.position.x + config.dotSize / 2;
-      const fromY = this.position.y + config.dotSize / 2;
+      const startFromX = this.position.x + config.dotSize / 2;
+      const startFromY = this.position.y + config.dotSize / 2;
       let line;
 
-      let toX = 0;
-      let toY = 0;
+      let endToX = 0;
+      let endToY = 0;
 
       if (oriental === 'vertical') {
-        toX = fromX;
-        toY = fromY + move;
+        endToX = startFromX;
+        endToY = startFromY + move;
       }
 
       if (oriental === 'horizontal') {
-        toX = fromX + move;
-        toY = fromY
+        endToX = startFromX + move;
+        endToY = startFromY
       }
 
       line = this.scene.add.line( 
         0,
         0,
-        fromX,
-        fromY,
-        toX,
-        toY,
+        startFromX,
+        startFromY,
+        endToX,
+        endToY,
         this.color,
         1,
       ).setOrigin(0, 0);
