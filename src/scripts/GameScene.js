@@ -30,10 +30,14 @@ export class GameScene extends Phaser.Scene {
     this.dots = [];
     const positions = this.getDotsPositions();
 
-    for (const position of positions) {
-      const dotColor = Phaser.Utils.Array.GetRandom(config.dotColors);
+    for (let row = 0; row < config.rows; row++) {
+      this.dots[row] = [];
 
-      this.dots.push(new Dot(this, dotColor, position));
+      while (this.dots[row].length < config.cols) {
+        const dotColor = Phaser.Utils.Array.GetRandom(config.dotColors);
+
+        this.dots[row].push(new Dot(this, dotColor, positions.pop()));
+      }      
     }
 
     this.input.on('gameobjectdown', this.onDotSelected, this);
