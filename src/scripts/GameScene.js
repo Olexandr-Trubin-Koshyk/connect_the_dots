@@ -36,7 +36,7 @@ export class GameScene extends Phaser.Scene {
       while (this.dots[row].length < config.cols) {
         const dotColor = Phaser.Utils.Array.GetRandom(config.dotColors);
 
-        this.dots[row].push(new Dot(this, dotColor, positions.pop()));
+        this.dots[row].push(new Dot(this, dotColor, positions.shift()));
       }      
     }
 
@@ -140,9 +140,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDotsFall() {
-    this.dots.forEach(dot => {
-      dot.move()
-    })
+    for (let row = 0; row < this.dots.length; row++) {
+      this.dots[row].forEach(dot => {
+        dot.move()
+      })
+    }
   }
 
   onDotsRemove() {
@@ -170,6 +172,27 @@ export class GameScene extends Phaser.Scene {
       this.selectedDots.length = 0;
       this.lines.length = 0;
     }
+    console.log(this.dots)
+    this.createNewDots();
+  }
+
+  createNewDots() {
+    for (let row = 0; row < config.rows; row++) {
+      for (let col = 0; col < config.cols; col++) {
+        if (this.dots[row][col] === null) {
+          const newDotPosition = {
+            x: this.offsetX + col * config.dotSize,
+            y: this.offsetY + row * config.dotSize,
+          };
+          
+          const dotColor = Phaser.Utils.Array.GetRandom(config.dotColors);
+
+          const newDot = new Dot(this, dotColor, newDotPosition);
+          this.dots[row][col] = newDot;
+          newDot.move();
+        }
+      }
+    }
   }
 
   create() {
@@ -184,14 +207,14 @@ export class GameScene extends Phaser.Scene {
     const positions = [];
     const dotTexture = this.textures.get('dot').getSourceImage();
     const dotSize = dotTexture.height;
-    const offsetX = (this.sys.game.config.width - dotSize * config.cols) / 2;
-    const offsetY = (this.sys.game.config.height - dotSize * config.rows) / 2;
+    this.offsetX = (this.sys.game.config.width - dotSize * config.cols) / 2;
+    this.offsetY = (this.sys.game.config.height - dotSize * config.rows) / 2;
 
     for (let row = 0; row < config.rows; row++) {
       for (let col = 0; col < config.cols; col++) {
         positions.push({
-          x: offsetX + col * dotSize,
-          y: offsetY + row * dotSize,
+          x: this.offsetX + col * dotSize,
+          y: this.offsetY + row * dotSize,
         });
       }
     }
