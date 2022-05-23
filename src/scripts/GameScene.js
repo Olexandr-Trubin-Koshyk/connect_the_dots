@@ -153,13 +153,19 @@ export class GameScene extends Phaser.Scene {
     
     if (this.selectedDots.length > 1) {
       for (const dot of this.selectedDots) {
+        for (let row = 0; row < config.rows; row++) {
+          const index = this.dots[row].findIndex(el => el === dot);
+          if (index !== -1) {
+            this.dots[row][index] = null;
+          }
+        }
         dot.destroy();
       }
   
       for (const line of this.lines) {
         line.destroy();
       }
- 
+
       this.addPoints(this.selectedDots.length);
       this.selectedDots.length = 0;
       this.lines.length = 0;
